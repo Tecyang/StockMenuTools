@@ -46,12 +46,21 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "cell"), owner: nil) as! NSTableCellView
-        cell.textField?.stringValue = self.searchResults[row]
-        print(cell.textField?.stringValue)
-        //       print(cell.textField?.stringValue)
+//        if tableColumn?.identifier.rawValue == "stockInfoColumn" {
+            //添加股票名称
+            let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "cell"), owner: nil) as! NSTableCellView
+            cell.textField?.stringValue = self.searchResults[row]
+            print(cell.textField?.stringValue)
+//        }
         return cell
+//        else if tableColumn?.identifier.rawValue == "stockOperationColumn"{
+//            //添加股票名称
+//            let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "operationCell"), owner: nil) as! NSTableCellView
+//            cell.textField?.stringValue = "添加"
+//            return cell
+//        }
     }
+    
     
     //    @IBAction func AddStockCode(_ sender: NSSearchField) {
     ////        print(sender.stringValue)
@@ -61,6 +70,7 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
     
     func getStockInfo(code:String) {
         let url = "https://www.weicaixun.com/pubapi1/gp_search_lists";
+        
         let paras = ["search_text":code]
         
         HTTP.GET(url, parameters: paras)  { response in

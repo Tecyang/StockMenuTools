@@ -38,8 +38,19 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "AppDelegate.applicationDidFinishLaunching(_:):AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "codes">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in AddStockViewController.getStockInfo(code:):AddStockViewController.swift">
          <PersistentStrings>
+            <PersistentString
+               value = "json[&quot;data&quot;].arrayValue">
+            </PersistentString>
             <PersistentString
                value = "response.text">
             </PersistentString>
@@ -50,6 +61,14 @@
          <PersistentStrings>
             <PersistentString
                value = "searchField">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in AppDelegate.getData(codes:):AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

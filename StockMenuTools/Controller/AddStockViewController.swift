@@ -71,7 +71,9 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
         else if tableColumn?.identifier.rawValue == "stockOperationColumn" {
             //add stock operation
             let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "operation"), owner: nil) as? NSTableCellView
-            if stockCodesModel.symbols.contains(symbol) {
+            let hasCode = stockCodesModel.symbols.map { $0["symbol"].stringValue == symbol }
+            
+            if hasCode.contains(true) {
                 cell?.textField?.stringValue = "移除"
             }
             else{
@@ -86,15 +88,18 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
     }
     
     @IBAction func chooseStock(_ sender: NSTableView) {
-        print(sender.clickedRow)
-        let symbol:String  = searchResults[sender.clickedRow]["symbol"].stringValue
-        if stockCodesModel.symbols.contains(symbol) {
-            stockCodesModel.removeSymbol(symbol)
+        
+        let code:JSON = searchResults[sender.clickedRow]
+        let symbol:String  = code["symbol"].stringValue
+        let hasCode = stockCodesModel.symbols.map { $0["symbol"].stringValue == symbol }
+        
+        if hasCode.contains(true) {
+            stockCodesModel.removeSymbol(symbol,code:code)
             let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView
             cell?.textField?.stringValue = "移除"
         }
         else{
-            stockCodesModel.appendSymbol(symbol)
+            stockCodesModel.appendSymbol(symbol,code: code)
             let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView
             cell?.textField?.stringValue = "添加"
         }

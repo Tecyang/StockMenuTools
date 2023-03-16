@@ -8,6 +8,7 @@
 
 import Cocoa
 import SwiftUI
+import SwiftyJSON
 import SwiftHTTP
 import Foundation
 
@@ -16,12 +17,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var menu: NSMenu!
     
-    @Published var text:NSAttributedString = NSAttributedString(string: "添加股票")
-    
-    var timer: Timer =  Timer()
-    var isPaused = false
-    var times = 0
-    let statusItem = NSStatusBar.system.statusItem(withLength: CGFloat.init(150.0))
+    //代码
+    @AppStorage("codes") private var codes: String = ""
+    //是否刷新状态栏标识
+    @AppStorage("isPaused") private var isPaused: Bool = false
+    //视图文本
+    @Published private var text:NSAttributedString = NSAttributedString(string: "添加")
+    //更新视图计时器
+    private var timer: Timer =  Timer()
+    //总更新次数计数
+    private var times = 0
+    //状态栏
+    private let statusItem = NSStatusBar.system.statusItem(withLength: CGFloat.init(150.0))
+    //弹窗监视器
     private var monitor: Any?
 
     
@@ -36,6 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         statusItem.menu = menu
+//        codes = "sz002848,sz002462,sz002229,sz002168"
         
         if let button = statusItem.button {
             button.image = NSImage(named: "StatusIcon")
@@ -84,11 +93,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        var isPaused = false
 
         isPaused = false
-        let codes = "sz002848,sz002462,sz002229,sz002168"
-        self.getData(codes:codes)
+//        let codes = "sz002848,sz002462,sz002229,sz002168"
+        self.getData(codes:self.codes)
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [self] _ in
             self.times=self.times+1
-            self.getData(codes:codes)
+            self.getData(codes:self.codes)
             })
     }
 
@@ -154,7 +163,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //            print(resArr)
             var i = 0
             for code in codeArr {
-                let index = resArr.firstIndex(of:code.replacingOccurrences(of: "sz", with: ""))
+                let index = resArr.firstIndex(of:code.replacingOccurrences(of: "sz", with: "").replacingOccurrences(of: "sh", with: ""))
                 print(self.times)
                 i=i+1
                 if index != nil && self.times%i == 0{

@@ -45,6 +45,9 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
             getStockInfo(code:searchText)
             print(searchResults)
         }
+        else{
+            tableView.reloadData()
+        }
     }
     
 //    func updateSearchResults(res:[JSON]){
@@ -84,7 +87,7 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
     
     @IBAction func chooseStock(_ sender: NSTableView) {
         print(sender.clickedRow)
-        var symbol:String  = searchResults[sender.clickedRow]["symbol"].stringValue
+        let symbol:String  = searchResults[sender.clickedRow]["symbol"].stringValue
         if stockCodesModel.symbols.contains(symbol) {
             stockCodesModel.removeSymbol(symbol)
             let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView

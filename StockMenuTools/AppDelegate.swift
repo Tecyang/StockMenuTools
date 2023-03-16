@@ -8,6 +8,7 @@
 
 import Cocoa
 import SwiftUI
+import SwiftyJSON
 import SwiftHTTP
 import Foundation
 
@@ -162,7 +163,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //            print(resArr)
             var i = 0
             for code in codeArr {
-                let index = resArr.firstIndex(of:code.replacingOccurrences(of: "sz", with: ""))
+                let index = resArr.firstIndex(of:code.replacingOccurrences(of: "sz", with: "").replacingOccurrences(of: "sh", with: ""))
                 print(self.times)
                 i=i+1
                 if index != nil && self.times%i == 0{

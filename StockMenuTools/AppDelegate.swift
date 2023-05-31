@@ -17,10 +17,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @IBOutlet weak var menu: NSMenu!
     
+    
     //代码
     @AppStorage("codes") private var codes: String = ""
+    
     //是否刷新状态栏标识
     @AppStorage("isPaused") private var isPaused: Bool = false
+    //刷新间隔 s
+    @AppStorage("timeInterval") private var timeInterval = 1
     //视图文本
     @Published private var text:NSAttributedString = NSAttributedString(string: "添加")
     //更新视图计时器
@@ -44,7 +48,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         statusItem.menu = menu
-//        codes = "sz002848,sz002462,sz002229,sz002168"
         
         if let button = statusItem.button {
             button.image = NSImage(named: "StatusIcon")
@@ -90,12 +93,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @IBAction func playButton(sender: AnyObject) {
 
-//        var isPaused = false
-
         isPaused = false
-//        let codes = "sz002848,sz002462,sz002229,sz002168"
         self.getData(codes:self.codes)
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { [self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(timeInterval), repeats: true, block: { [self] _ in
             self.times=self.times+1
             self.getData(codes:self.codes)
             })
@@ -143,9 +143,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let url: String = "https://qt.gtimg.cn"
         //        let url: String = "https://www.weicaixun.com/pubapi1/get_gp_info"
         
-//        let codes = "sz002229,sz002729"
-        let codeArr:[String] = codes.components(separatedBy: ",")
-        let paras: [String:String] = ["q":codes]
+        var codeParas = ""
+        if let codesData = codes.data(using: .utf8){
+            let json = try? JSON(data: codesData)
+            codeParas = json!.arrayValue.map { $0["symbol"].stringValue }.joined(separator: ",")
+        }
+        
+        let codeArr:[String] = codeParas.components(separatedBy: ",")
+        let paras: [String:String] = ["q":codeParas]
+        if codeParas.isEmpty{
+            pauseButton(sender: NSNull.self)
+            return
+        }
         HTTP.GET(url, parameters: paras) { response in
             if let err = response.error {
                 print("error: \(err.localizedDescription)")
@@ -158,9 +167,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let gbk = String.Encoding.init(rawValue: enc)
             
             let res:String  = String(data: response.data, encoding: gbk)!
-//            print(res)
             let resArr =  res.components(separatedBy: "~")
-//            print(resArr)
             var i = 0
             for code in codeArr {
                 let index = resArr.firstIndex(of:code.replacingOccurrences(of: "sz", with: "").replacingOccurrences(of: "sh", with: ""))

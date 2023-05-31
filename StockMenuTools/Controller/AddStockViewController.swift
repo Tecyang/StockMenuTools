@@ -23,8 +23,9 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
     // 搜索结果
     var searchResults = [JSON]()
     
-    // 已存在代码表格
-    @IBOutlet weak var codesTableView: NSTableView!
+        // 已存在代码表格
+    @IBOutlet weak var existCodeTableView: NSTableView!
+
     
     private var stockCodesModel = StockCodesModes()
     
@@ -35,6 +36,7 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
         // Do view setup here.
         searchField.delegate = self
         tableView.delegate = self
+        existCodeTableView.delegate = self
     }
     
     func controlTextDidChange(_ obj: Notification) {
@@ -47,6 +49,7 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
         }
         else{
             tableView.reloadData()
+            existCodeTableView.reloadData()
         }
     }
     
@@ -54,14 +57,30 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
 //        self.searchResults = res
 //    }
     func numberOfRows(in tableView: NSTableView) -> Int {
-        // 返回表格的分区数量
-        return searchResults.count
+        print(tableView)
+        if tableView==self.tableView{
+            // 返回表格的分区数量
+            return searchResults.count
+        }
+        else{
+            return stockCodesModel.symbols.count
+        }
         
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let symbol:String = self.searchResults[row]["symbol"].stringValue
-        let name:String = self.searchResults[row]["name"].stringValue
+        var symbol:String = ""
+        var name:String = ""
+
+        if tableView == self.tableView{
+             symbol = self.searchResults[row]["symbol"].stringValue
+             name = self.searchResults[row]["name"].stringValue
+        }
+        else{
+            symbol = stockCodesModel.symbols[row]["symbol"].stringValue
+            name = stockCodesModel.symbols[row]["name"].stringValue
+        }
+        
         if tableColumn?.identifier.rawValue == "stockInfoColumn" {
             //add stock symbol
             let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "cell"), owner: nil) as? NSTableCellView
@@ -104,6 +123,27 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
             cell?.textField?.stringValue = "添加"
         }
         tableView.reloadData()
+        existCodeTableView.reloadData()
+    }
+    
+    @IBAction func removeStock(_ sender: NSTableView){
+        let code:JSON = stockCodesModel.symbols[sender.clickedRow]
+        let symbol:String  = code["symbol"].stringValue
+        let hasCode = stockCodesModel.symbols.map { $0["symbol"].stringValue == symbol }
+        
+//        if hasCode.contains(true) {
+        stockCodesModel.removeSymbol(symbol,code:code)
+//            let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView
+//            cell?.textField?.stringValue = "移除"
+//        }
+//        else{
+//            stockCodesModel.appendSymbol(symbol,code: code)
+//            let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView
+//            cell?.textField?.stringValue = "添加"
+//        }
+//        tableView.reloadData()
+        existCodeTableView.reloadData()
+        
     }
     
     func getStockInfo(code:String) {

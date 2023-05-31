@@ -131,17 +131,8 @@ class AddStockViewController: NSViewController,NSSearchFieldDelegate,NSTableView
         let symbol:String  = code["symbol"].stringValue
         let hasCode = stockCodesModel.symbols.map { $0["symbol"].stringValue == symbol }
         
-//        if hasCode.contains(true) {
         stockCodesModel.removeSymbol(symbol,code:code)
-//            let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView
-//            cell?.textField?.stringValue = "移除"
-//        }
-//        else{
-//            stockCodesModel.appendSymbol(symbol,code: code)
-//            let cell = stockOperation.dataCell(forRow: sender.clickedRow) as? NSTableCellView
-//            cell?.textField?.stringValue = "添加"
-//        }
-//        tableView.reloadData()
+        tableView.reloadData()
         existCodeTableView.reloadData()
         
     }

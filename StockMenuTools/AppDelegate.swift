@@ -32,7 +32,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     //总更新次数计数
     private var times = 0
     //状态栏
-    private let statusItem = NSStatusBar.system.statusItem(withLength: CGFloat.init(150.0))
+    private let statusItem = NSStatusBar.system.statusItem(withLength: CGFloat.init(180.0))
+    
     //弹窗监视器
     private var monitor: Any?
 
@@ -40,7 +41,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func updateStockInfo(text:NSAttributedString){
         self.text = text
         self.statusItem.button?.attributedTitle = self.text
-        self.statusItem.button?.contentTintColor = NSColor.red
     }
     
     let popover = NSPopover()
@@ -136,6 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     override init() {
         super.init()
+//        self.statusItem.button?.contentTintColor = NSColor.white
 //        startTimer()
     }
 
@@ -183,8 +184,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         updownrate = "+"+updownrate
                     }
                         
-                    let txt = AttributedString(name+":"+sell+" "+updownrate)
-                    self.updateStockInfo(text:NSAttributedString(txt))
+                    let info = name+":"+sell+" "+updownrate
+                    let infoAttribute = [NSAttributedString.Key.foregroundColor: NSColor.white]
+                    let infoAttrString = NSAttributedString(string: info, attributes: infoAttribute)
+                    DispatchQueue.main.async {
+                        self.updateStockInfo(text:infoAttrString)
+                    }
                 }
                                             
                 

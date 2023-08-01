@@ -16,9 +16,10 @@ class StockCodesModes{
     
     var symbols = [JSON]()
     init (){
-        
         let jsonData = codes.data(using: .utf8)!
-        symbols = try! JSON(data: jsonData).arrayValue
+        if jsonData.count > 0 {
+            symbols = try! JSON(data: jsonData).arrayValue
+        }
     }
         
     func appendSymbol(_ symbol: String, code: JSON) {
